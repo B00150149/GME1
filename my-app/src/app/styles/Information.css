@@ -1,0 +1,290 @@
+/* Grid-container */
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr 2fr 1fr 1fr;
+  grid-template-rows: auto 1fr 1fr;
+  grid-template-areas:
+    'top top top top top top'
+    'left left main main right right'
+    'left left main main right right';
+  gap: 20px;
+  padding: 20px;
+}
+
+
+@media (max-width: 1024px) {
+  .grid-container {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-areas:
+      "top top top top"
+      "left main main right"
+      "left main main right";
+  }
+}
+
+
+
+/* ####################################################### Top container######################################################## */
+@media (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "top"
+      "left"
+      "main"
+      "right";
+  }
+  .left, .main, .right {
+    text-align: center;
+    padding: 10px;
+  }
+}
+
+/* Top container */
+.top {
+  grid-area: top;
+  background-color: #f0f0f0;
+  padding: 0; /* Remove padding around the container */
+  text-align: center;
+  margin: 0; /* Ensure no margin is present */
+}
+
+/* Slideshow container */
+.slideshow-container {
+  width: 100%; /* Full width of the container */
+  height: 280px; /* Fixed height for the slideshow */
+  position: relative;
+  overflow: hidden; /* Hide anything that overflows */
+  padding: 0; /* Remove padding around the slideshow */
+  margin: 0; /* Remove margin */
+}
+
+/* Image in container */
+.slideshow-container img {
+  width: 100%; /* Ensure image fills the container width */
+  height: 100%; /* Ensure image fills the container height */
+  object-fit: cover; /* Cover the entire area without stretching */
+}
+
+/* Caption text */
+.text {
+  color: #f2f2f2;
+  font-size: 20px;
+  padding: 8px 12px;
+  position: absolute;
+  top: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
+  background-color: rgba(76, 175, 80, 0.5);
+  font-weight: bold;
+}
+
+/* Fading animation */
+.fade {
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@keyframes fade {
+  from { opacity: .4 }
+  to { opacity: 1 }
+}
+
+/* Button link in  slideshow */
+.slide-button {
+  position: absolute;
+  top: 80%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color:  rgba(0, 0, 0, 0.9);
+  color: white;
+  font-size: 16px;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  transition: backg
+}
+
+.slide-button:hover {
+  background-color: rgba(76, 175, 80, 0.5);
+}
+
+/* On smaller screens, decrease text size */
+@media only screen and (max-width: 300px) {
+  .text {
+    font-size: 11px;
+  }
+}
+
+/* ####################################################### Left container######################################################## */
+.left {
+  grid-area: left;
+  background-color: #d0d0d0;
+  text-align: center;
+ 
+}
+
+.left h4 {
+  font-size: 20px;
+  color: #333;
+  background-color: #4CAF50;
+  margin: 0; /* Remove margin before h3 */
+  padding: 8px 0; /* Optional: add some padding for spacing */
+}
+
+.image-container {
+  margin-bottom: 20px;
+}
+
+.left img {
+  width: 45%;
+  height: auto;
+  padding: 10px 0;
+}
+
+.left p {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.learn-button {
+  padding: 10px 20px;
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin-bottom: 20px
+}
+
+.learn-button:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 576px) {
+  .learn-button {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+  h4 {
+    font-size: 18px;
+  }
+  p {
+    font-size: 14px;
+  }
+  .image-container img {
+    width: 80%;
+  }
+}
+
+/* ####################################################### Middle container######################################################## */
+.main {
+  grid-area: main;
+  background-color: #e0e0e0;
+  padding: 0;
+  text-align: center;
+}
+
+.main h4 {
+  font-size: 20px;
+  color: #333;
+  background-color: #2196F3;
+  margin: 0; /* Remove margin before h3 */
+  padding: 8px 0; /* Optional: add some padding for spacing */
+}
+
+.image-container {
+  margin-bottom: 20px;
+}
+
+.main img {
+  width: 40%;
+  height: auto;
+  padding: 10px 0;
+}
+
+.main p {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* .learn-button {
+  padding: 10px 20px;
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin-bottom: 20px
+}
+
+.learn-button:hover {
+  background-color: #0056b3;
+} */
+
+/* ####################################################### Right container ######################################################## */
+.right {
+  grid-area: right;
+  background-color: #c0c0c0;
+  padding: 0;
+  text-align: center;
+}
+
+.right h4 {
+  font-size: 20px;
+  color: #333;
+  background-color: #4CAF50;
+  margin: 0; /* Remove margin before h3 */
+  padding: 8px 0; /* Optional: add some padding for spacing */
+}
+
+.image-container {
+  margin-bottom: 20px;
+}
+
+.right img {
+  width: 63%;
+  height: auto;
+  padding: 10px 0;
+}
+
+.right p {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.learn-button {
+  padding: 10px 20px;
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin-bottom: 20px
+}
+
+.learn-button:hover {
+  background-color: #0056b3;
+}
+
+/* Add margin between sections */
+.left, .main, .right {
+  margin: 20px 0;
+}
+
+/* Add hover effects for better interactivity */
+.image-container img:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}

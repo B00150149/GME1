@@ -1,0 +1,71 @@
+/* About Us Page Styles */
+.about-container {
+    padding: 40px 20px;
+    background-color: #f9f9f9;
+  }
+  
+  .about-section {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  .about-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #472001;
+  }
+  
+  .about-description {
+    font-size: 1.2rem;
+    color: #49371e;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .mission-section {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  .mission-title {
+    font-size: 2.5rem;
+    color: #472001;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+  
+  .mission-description {
+    font-size: 1.1rem;
+    color: #49371e;
+    line-height: 1.6;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .values-section {
+    margin-bottom: 40px;
+  }
+  
+  .values-title {
+    font-size: 2.5rem;
+    color: #472001;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .values-list {
+    list-style-type: none;
+    padding-left: 0;
+    text-align: center;
+  }
+  
+  .values-list li {
+    font-size: 1.1rem;
+    color: #49371e;
+    margin-bottom: 15px;
+    line-height: 1.8;
+  }
+  
