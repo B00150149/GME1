@@ -65,8 +65,8 @@ export default function Products() {
                   
                   <Card.Img
                     variant="top"
-                    style={{ height: '60%', width: '100' }} // Pass height as a string
-                    src={basePath+item.images[0]}//{item.images && item.images[0]} // Use the first image if available
+                    style={{ height: '60%', width: '100%' }} // Pass height as a string
+                    src={item.images && item.images.length > 0 ? item.images[0] : '/placeholder.png'} // Use the first Cloudinary image URL if available, else placeholder
                     alt={item.itemName}
                     className="p-3"
                   />
