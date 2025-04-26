@@ -1,13 +1,11 @@
-
 'use client';
-import React from "react";
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 export default function ChildModal({ onClose, onSelect, onSwap }) {
- // const items = ["Option 1", "Option 2", "Option 3"]; // Sample options
   const [data, setData] = useState([]); // Store the fetched data
+  const [selectedIndex, setSelectedIndex] = useState(null);
 
-// Fetch products from the API
+  // Fetch products from the API
   useEffect(() => {
     fetch('/api/getUserProducts')
       .then((res) => res.json())
@@ -16,60 +14,120 @@ export default function ChildModal({ onClose, onSelect, onSwap }) {
       });
   }, []);
 
+  const handleSelect = (index) => {
+    setSelectedIndex(index);
+    onSelect({ id: data[index]._id, swapItemName: data[index].itemName });
+  };
 
   return (
     <div className="modal-backdrop">
       <div className="modal-content">
         <h3>Select an Option</h3>
 
-        {/* Combobox (select dropdown) */}
-        <select className="form-select" onChange={(e) => onSelect({id: data[e.target.selectedIndex-1]._id, swapItemName: e.target.value})} defaultValue="">
-          <option value="" disabled>Select an option</option>
-          {data.length > 0 && data.map((item, index) => (
-            <option key={index} value={item.itemName}>
-              {item.itemName}
-            </option>
-          ))}
-        </select>
+        {/* Display products as a list with images */}
+        <div className="product-list">
+          {data.length > 0 ? (
+            data.map((item, index) => (
+              <div
+                key={item._id}
+                className={`product-item ${selectedIndex === index ? 'selected' : ''}`}
+                onClick={() => handleSelect(index)}
+              >
+                {item.images && item.images.length > 0 ? (
+                  <img src={item.images[0]} alt={item.itemName} className="product-image" />
+                ) : (
+                  <div className="no-image">No Image</div>
+                )}
+                <div className="product-name">{item.itemName}</div>
+              </div>
+            ))
+          ) : (
+            <div>No products available</div>
+          )}
+        </div>
 
         <br />
 
-        <button className="btn btn-danger" onClick={onSwap}>Swap</button>
+        <button className="btn btn-danger" onClick={onSwap} disabled={selectedIndex === null}>Swap</button>
         <button className="btn btn-danger" onClick={onClose}>Close</button>
       </div>
 
-      
-
       {/* Modal Styling */}
-    
-        <style jsx>{`
+      <style jsx>{`
         .modal-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: transparent;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px); /* Adds a subtle blur effect */
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: transparent;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          backdrop-filter: blur(5px); /* Adds a subtle blur effect */
         }
         .modal-content {
-            background: rgba(255, 255, 255, 0.9); /* Slight transparency */
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            // box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Adds a shadow for depth */
+          background: rgba(255, 255, 255, 0.9); /* Slight transparency */
+          padding: 20px;
+          border-radius: 8px;
+          text-align: center;
+          max-height: 80vh;
+          overflow-y: auto;
         }
-    .form-select {
-            width: 100%;
-            margin-top: 10px;
+        .product-list {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 15px;
+          max-height: 300px;
+          overflow-y: auto;
+          margin-top: 10px;
         }
-        `}</style>
-
+        .product-item {
+          cursor: pointer;
+          border: 2px solid transparent;
+          border-radius: 8px;
+          padding: 10px;
+          width: 120px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          transition: border-color 0.3s;
+        }
+        .product-item.selected {
+          border-color: #dc3545; /* Bootstrap danger color */
+          background-color: #ffe6e6;
+        }
+        .product-image {
+          width: 100px;
+          height: 100px;
+          object-fit: cover;
+          border-radius: 6px;
+          margin-bottom: 8px;
+        }
+        .no-image {
+          width: 100px;
+          height: 100px;
+          background-color: #ddd;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 6px;
+          margin-bottom: 8px;
+          color: #666;
+          font-size: 14px;
+        }
+        .product-name {
+          font-weight: 600;
+          font-size: 14px;
+          color: #333;
+          text-align: center;
+        }
+        .btn {
+          margin: 5px;
+          min-width: 80px;
+        }
+      `}</style>
     </div>
   );
 }
-
-
