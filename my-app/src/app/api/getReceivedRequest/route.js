@@ -18,6 +18,17 @@ export async function GET(req, res) {
     console.log('Connected successfully to server');
     const db = client.db(dbName);
     const collection = db.collection('swapRequests'); // collection name
+
+    // Check if query param 'count' is present to return count of pending requests
+    const { searchParams } = new URL(req.url);
+    const countOnly = searchParams.get('count');
+
+    if (countOnly === 'true') {
+      const pendingCount = await collection.countDocuments({ userEmail: email, status: "Pending" });
+      console.log('Pending requests count:', pendingCount);
+      return new Response(JSON.stringify({ pendingCount }), { status: 200 });
+    }
+
     //filter rout request and status of request for the particular user 
     const findResult = await collection.find({userEmail:email,status:"Accepted"}).toArray();
     console.log('Found documents =>', findResult);

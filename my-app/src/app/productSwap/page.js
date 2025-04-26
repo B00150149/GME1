@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from "react";
 
-export default function ChildModal({ onClose, onSelect, onSwap }) {
+export default function ChildModal({ onClose, onSelect, onSwap, sourceCategory }) {
   const [data, setData] = useState([]); // Store the fetched data
   const [selectedIndex, setSelectedIndex] = useState(null);
 
@@ -10,13 +10,16 @@ export default function ChildModal({ onClose, onSelect, onSwap }) {
     fetch('/api/getUserProducts')
       .then((res) => res.json())
       .then((data) => {
-        setData(data);
+        // Filter products by sourceCategory
+        const filteredData = data.filter(item => item.category === sourceCategory);
+        setData(filteredData);
       });
-  }, []);
+  }, [sourceCategory]);
 
   const handleSelect = (index) => {
     setSelectedIndex(index);
-    onSelect({ id: data[index]._id, swapItemName: data[index].itemName });
+    const selectedItem = data[index];
+    onSelect({ id: selectedItem._id, swapItemName: selectedItem.itemName, category: selectedItem.category });
   };
 
   return (
@@ -24,35 +27,54 @@ export default function ChildModal({ onClose, onSelect, onSwap }) {
       <div className="modal-content">
         <h3>Select an Option</h3>
 
-        {/* Display products as a list with images */}
-        <div className="product-list">
-          {data.length > 0 ? (
-            data.map((item, index) => (
-              <div
-                key={item._id}
-                className={`product-item ${selectedIndex === index ? 'selected' : ''}`}
-                onClick={() => handleSelect(index)}
-              >
-                {item.images && item.images.length > 0 ? (
-                  <img src={item.images[0]} alt={item.itemName} className="product-image" />
-                ) : (
-                  <div className="no-image">No Image</div>
-                )}
-                <div className="product-name">{item.itemName}</div>
-              </div>
-            ))
-          ) : (
-            <div>No products available</div>
-          )}
+        <div className="container">
+          <div className="row">
+            {data.length > 0 ? (
+              data.map((item, index) => (
+                <div
+                  key={item._id}
+                  className={`col-6 col-md-4 mb-3`}
+                >
+                  <div
+                    className={`card h-100 ${selectedIndex === index ? 'border-primary' : ''}`}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => handleSelect(index)}
+                  >
+                    {item.images && item.images.length > 0 ? (
+                      <img
+                        src={item.images[0]}
+                        className="card-img-top"
+                        alt={item.itemName}
+                        style={{ objectFit: 'cover', height: '180px' }}
+                      />
+                    ) : (
+                      <div
+                        className="card-img-top d-flex align-items-center justify-content-center bg-light"
+                        style={{ height: '180px' }}
+                      >
+                        No Image
+                      </div>
+                    )}
+                    <div className="card-body">
+                      <h5 className="card-title text-truncate">{item.itemName}</h5>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p>No products available</p>
+            )}
+          </div>
         </div>
 
-        <br />
-
-        <button className="btn btn-danger" onClick={onSwap} disabled={selectedIndex === null}>Swap</button>
-        <button className="btn btn-danger" onClick={onClose}>Close</button>
+        <button className="btn btn-danger me-2" onClick={onSwap} disabled={selectedIndex === null}>
+          Swap
+        </button>
+        <button className="btn btn-secondary" onClick={onClose}>
+          Close
+        </button>
       </div>
 
-      {/* Modal Styling */}
       <style jsx>{`
         .modal-backdrop {
           position: fixed;
@@ -64,68 +86,16 @@ export default function ChildModal({ onClose, onSelect, onSwap }) {
           display: flex;
           justify-content: center;
           align-items: center;
-          backdrop-filter: blur(5px); /* Adds a subtle blur effect */
+          backdrop-filter: blur(5px);
         }
         .modal-content {
-          background: rgba(255, 255, 255, 0.9); /* Slight transparency */
+          background: rgba(255, 255, 255, 0.95);
           padding: 20px;
           border-radius: 8px;
           text-align: center;
-          max-height: 80vh;
-          overflow-y: auto;
-        }
-        .product-list {
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: center;
-          gap: 15px;
-          max-height: 300px;
-          overflow-y: auto;
-          margin-top: 10px;
-        }
-        .product-item {
-          cursor: pointer;
-          border: 2px solid transparent;
-          border-radius: 8px;
-          padding: 10px;
-          width: 120px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          transition: border-color 0.3s;
-        }
-        .product-item.selected {
-          border-color: #dc3545; /* Bootstrap danger color */
-          background-color: #ffe6e6;
-        }
-        .product-image {
-          width: 100px;
-          height: 100px;
-          object-fit: cover;
-          border-radius: 6px;
-          margin-bottom: 8px;
-        }
-        .no-image {
-          width: 100px;
-          height: 100px;
-          background-color: #ddd;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          border-radius: 6px;
-          margin-bottom: 8px;
-          color: #666;
-          font-size: 14px;
-        }
-        .product-name {
-          font-weight: 600;
-          font-size: 14px;
-          color: #333;
-          text-align: center;
-        }
-        .btn {
-          margin: 5px;
-          min-width: 80px;
+          max-width: 600px;
+          width: 90%;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
       `}</style>
     </div>
