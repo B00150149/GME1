@@ -15,9 +15,6 @@ export async function GET(req, res) {
    const swapItemId = searchParams.get('swapItemId');
    const itemId = searchParams.get('ItemId');
    const swapItemName = searchParams.get('swapItemName');
-   const itemCategory = searchParams.get('itemCategory');
-   const swapItemCategory = searchParams.get('swapItemCategory');
-  
   
 
    //get the user sending equest details through sessions
@@ -41,12 +38,6 @@ if(senderEmail){
        await client.connect();
        console.log('Connected successfully to server');
        const db = client.db(dbName);
-
-       // Validate categories match
-       if (itemCategory !== swapItemCategory) {
-         return new Response(JSON.stringify({ error: "Product categories do not match" }), { status: 400 });
-       }
-
        const collection = db.collection('swapRequests');
  
        const myobj = {

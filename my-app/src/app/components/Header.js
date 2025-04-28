@@ -9,7 +9,6 @@ export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [pendingRequestCount, setPendingRequestCount] = useState(0);
 
   useEffect(() => {
     // Fetch the session email
@@ -32,45 +31,6 @@ export default function Header() {
     const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
     setIsLoggedIn(loggedIn);
   }, []);
-
-  useEffect(() => {
-    // Fetch pending request count on mount and every 30 seconds
-    const fetchPendingRequestCount = async () => {
-      try {
-        const response = await fetch('/api/getReceivedRequest?count=true');
-        const data = await response.json();
-        setPendingRequestCount(data.pendingCount || 0);
-      } catch (error) {
-        console.error('Failed to fetch pending request count:', error);
-      }
-    };
-
-    if (isLoggedIn) {
-      fetchPendingRequestCount();
-      const intervalId = setInterval(fetchPendingRequestCount, 30000); // 30 seconds
-      return () => clearInterval(intervalId);
-    }
-  }, [isLoggedIn]);
-
-  // Function to mark requests as viewed and clear badge
-  const markRequestsAsViewed = async () => {
-    try {
-      const response = await fetch('/api/markRequestsViewed', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      if (response.ok) {
-        setPendingRequestCount(0);
-        console.log('Requests marked as viewed');
-      } else {
-        console.error('Failed to mark requests as viewed');
-      }
-    } catch (error) {
-      console.error('Error marking requests as viewed:', error);
-    }
-  };
 
   function handleLogout() {
     // Logout logic
@@ -120,29 +80,36 @@ export default function Header() {
 
         {/* Navigation Links */}
         <div className="header__nav">
-          <Link href="/request" className="request-link" style={{ position: 'relative' }} onClick={markRequestsAsViewed}>
+          <Link href="/request" className="request-link">
             <FaEnvelope className="request-icon" />
-            {pendingRequestCount > 0 && (
-              <span
-                style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'red', color: 'white',borderRadius: '50%', padding: '2px 6px', 
-                fontSize: '12px', fontWeight: 'bold', lineHeight: '1', minWidth: '20px', textAlign: 'center', boxShadow: '0 0 2px rgba(0,0,0,0.5)', }}>
-                {pendingRequestCount}
-              </span>
-            )}
           </Link>
 
-          <Link href="/wishlist" className="wishlist-link"> <FaHeart className="wishlist-icon" /> </Link>
+          <Link href="/wishlist" className="wishlist-link">
+            <FaHeart className="wishlist-icon" />
+          </Link>
           
           {!isLoggedIn && <Link href="/signup">Signup</Link>}
 
           {/* Messenger icon visible after login */}
           {isLoggedIn && (
-            <Link href="/messages" className="messenger-link"> <FaComment className="messenger-icon" /> </Link>
+            <Link href="/messages" className="messenger-link">
+                <FaComment className="messenger-icon" />
+            </Link>
           )}
 
           {isLoggedIn ? (
-            <button onClick={handleLogout}
-              style={{ background: 'none', border: 'none', color: '#0070f3', cursor: 'pointer', padding: '0',}}> Logout</button>
+            <button
+              onClick={handleLogout}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#0070f3',
+                cursor: 'pointer',
+                padding: '0',
+              }}
+            >
+              Logout
+            </button>
           ) : (
             <Link href="/login">Login</Link>
           )}
@@ -151,12 +118,21 @@ export default function Header() {
           {isLoggedIn && (
             <div className={`dropdown ${dropdownOpen ? 'open' : ''}`}>
               <Link
-                href={`/profile2?email=${userData?.email}`} // Pass the user's email as a query parameter
-                className="user-link"
-                onClick={() => { setDropdownOpen(!dropdownOpen); console.log("Dropdown toggled:", !dropdownOpen); }} // Debugging
-                style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer',}}>
-                <FaUser className="user-icon" />
-              </Link>
+      href={`/profile2?email=${userData?.email}`} // Pass the user's email as a query parameter
+      className="user-link"
+      onClick={() => {
+        setDropdownOpen(!dropdownOpen);
+        console.log("Dropdown toggled:", !dropdownOpen); // Debugging
+      }}
+      style={{
+        background: 'none',
+        border: 'none',
+        color: 'white',
+        cursor: 'pointer',
+      }}
+    >
+      <FaUser className="user-icon" />
+    </Link>
               
               {dropdownOpen && (
                 <div className="dropdown-menu">
@@ -164,9 +140,7 @@ export default function Header() {
                   <button onClick={handleLogout} className="dropdown-item">Logout</button>
                 </div>
               )}
-
             </div>
-            
           )}
         </div>
       </header>

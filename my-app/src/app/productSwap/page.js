@@ -1,103 +1,79 @@
-'use client';
-import React, { useState, useEffect } from "react";
 
-export default function ChildModal({ onClose, onSelect, onSwap, sourceCategory }) {
+'use client';
+import React from "react";
+import { useState, useEffect } from 'react';
+
+export default function ChildModal({ category, onClose, onSelect, onSwap }) {
   const [data, setData] = useState([]); // Store the fetched data
-  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [filteredData, setFilteredData] = useState([]); // Store filtered data by category
 
   // Fetch products from the API
   useEffect(() => {
     fetch('/api/getUserProducts')
       .then((res) => res.json())
       .then((data) => {
-        // Filter products by sourceCategory
-        const filteredData = data.filter(item => item.category === sourceCategory);
-        setData(filteredData);
+        setData(data);
       });
-  }, [sourceCategory]);
+  }, []);
 
-  const handleSelect = (index) => {
-    setSelectedIndex(index);
-    const selectedItem = data[index];
-    onSelect({ id: selectedItem._id, swapItemName: selectedItem.itemName, category: selectedItem.category });
-  };
+  // Filter products by category when data or category changes
+  useEffect(() => {
+    if (category && data.length > 0) {
+      const filtered = data.filter(item => item.category === category);
+      setFilteredData(filtered);
+    } else {
+      setFilteredData([]);
+    }
+  }, [category, data]);
 
   return (
     <div className="modal-backdrop">
       <div className="modal-content">
         <h3>Select an Option</h3>
 
-        <div className="container">
-          <div className="row">
-            {data.length > 0 ? (
-              data.map((item, index) => (
-                <div
-                  key={item._id}
-                  className={`col-6 col-md-4 mb-3`}
-                >
-                  <div
-                    className={`card h-100 ${selectedIndex === index ? 'border-primary' : ''}`}
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => handleSelect(index)}
-                  >
-                    {item.images && item.images.length > 0 ? (
-                      <img
-                        src={item.images[0]}
-                        className="card-img-top"
-                        alt={item.itemName}
-                        style={{ objectFit: 'cover', height: '180px' }}
-                      />
-                    ) : (
-                      <div
-                        className="card-img-top d-flex align-items-center justify-content-center bg-light"
-                        style={{ height: '180px' }}
-                      >
-                        No Image
-                      </div>
-                    )}
-                    <div className="card-body">
-                      <h5 className="card-title text-truncate">{item.itemName}</h5>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p>No products available</p>
-            )}
-          </div>
-        </div>
+        {/* Combobox (select dropdown) */}
+        <select className="form-select" onChange={(e) => onSelect({id: filteredData[e.target.selectedIndex-1]._id, swapItemName: e.target.value})} defaultValue="">
+          <option value="" disabled>Select an option</option>
+          {filteredData.length > 0 && filteredData.map((item, index) => (
+            <option key={index} value={item.itemName}>
+              {item.itemName}
+            </option>
+          ))}
+        </select>
 
-        <button className="btn btn-danger me-2" onClick={onSwap} disabled={selectedIndex === null}>
-          Swap
-        </button>
-        <button className="btn btn-secondary" onClick={onClose}>
-          Close
-        </button>
+        <br />
+
+        <button className="btn btn-danger" onClick={onSwap}>Swap</button>
+        <button className="btn btn-danger" onClick={onClose}>Close</button>
       </div>
 
+      {/* Modal Styling */}
       <style jsx>{`
         .modal-backdrop {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: transparent;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          backdrop-filter: blur(5px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px); /* Adds a subtle blur effect */
         }
         .modal-content {
-          background: rgba(255, 255, 255, 0.95);
-          padding: 20px;
-          border-radius: 8px;
-          text-align: center;
-          max-width: 600px;
-          width: 90%;
-          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.9); /* Slight transparency */
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            // box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Adds a shadow for depth */
+        }
+        .form-select {
+            width: 100%;
+            margin-top: 10px;
         }
       `}</style>
     </div>
   );
 }
+

@@ -21,30 +21,47 @@ export default function Request() {
         .catch((error) => console.error('Error fetching request:', error));
 }, []);
 
-    const handleClick = () => {
-      router.push("/messages"); 
-    };
+  const handleClick = () => {
+    router.push("/messages"); 
+  };
 
-    const handleAccept = async (id) => {
-      try {
-        const response = await fetch('/api/putInRequest', {
-          method: 'PUT', // Use PUT to update status
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ requestId: id }), // Pass the request ID
-        });
+  const handleAccept = async (id) => {
+    try {
+      const response = await fetch('/api/putInRequest', {
+        method: 'PUT', // Use PUT to update status
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requestId: id }), // Pass the request ID
+      });
 
-        if (response.ok) {
-          setAcceptedRequests((prev) => ({ ...prev, [id]: true }));
+      if (response.ok) {
+        setAcceptedRequests((prev) => ({ ...prev, [id]: true }));
 
-          // Remove the accepted request from the requests list
-          //setRequests((prevRequests) => prevRequests.filter((request) => request._id !== id));
-        } else {
-          console.error('Failed to accept request');
-        }
-      } catch (error) {
-        console.error('Error updating request:', error);
+        // Remove the accepted request from the requests list
+        //setRequests((prevRequests) => prevRequests.filter((request) => request._id !== id));
+      } else {
+        console.error('Failed to accept request');
       }
-    };
+    } catch (error) {
+      console.error('Error updating request:', error);
+    }
+  };
+
+  const handleReject = async (id) => {
+    try {
+      const response = await fetch(`/api/deleteRequest?requestId=${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        // Remove the rejected request from the requests list
+        setRequests((prevRequests) => prevRequests.filter((request) => request._id !== id));
+      } else {
+        console.error('Failed to delete request');
+      }
+    } catch (error) {
+      console.error('Error deleting request:', error);
+    }
+  };
 
 
   return (
@@ -75,7 +92,7 @@ export default function Request() {
                 <div>
                   {!acceptedRequests[request._id] ? (
                     <>
-                      <button className="btn btn-outline-danger me-2">Reject</button>
+                      <button className="btn btn-outline-danger me-2" onClick={() => handleReject(request._id)}>Reject</button>
                       <button className="btn btn-outline-primary" onClick={() => handleAccept(request._id)}>Accept</button>
                     </>
                   ) : (
