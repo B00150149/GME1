@@ -1,11 +1,11 @@
-
 'use client';
 import React from "react";
 import { useState, useEffect } from 'react';
 
 export default function ChildModal({ category, onClose, onSelect, onSwap }) {
-  const [data, setData] = useState([]); // Store the fetched data
+  const [data, setData] = useState(null); // Store the fetched data, null initially
   const [filteredData, setFilteredData] = useState([]); // Store filtered data by category
+  const [selectedId, setSelectedId] = useState(null);
 
   // Fetch products from the API
   useEffect(() => {
@@ -18,32 +18,57 @@ export default function ChildModal({ category, onClose, onSelect, onSwap }) {
 
   // Filter products by category when data or category changes
   useEffect(() => {
-    if (category && data.length > 0) {
+    if (category && data && data.length > 0) {
       const filtered = data.filter(item => item.category === category);
       setFilteredData(filtered);
+      setSelectedId(null); // reset selection on category change
     } else {
       setFilteredData([]);
+      setSelectedId(null);
     }
   }, [category, data]);
+
+  // Handle selection change
+  const handleSelect = (item) => {
+    setSelectedId(item._id);
+    onSelect({ id: item._id, swapItemName: item.itemName });
+  };
+
+  if (data === null) {
+    // Data is still loading
+    return null; // or a loading spinner if preferred
+  }
 
   return (
     <div className="modal-backdrop">
       <div className="modal-content">
         <h3>Select an Option</h3>
 
-        {/* Combobox (select dropdown) */}
-        <select className="form-select" onChange={(e) => onSelect({id: filteredData[e.target.selectedIndex-1]._id, swapItemName: e.target.value})} defaultValue="">
-          <option value="" disabled>Select an option</option>
-          {filteredData.length > 0 && filteredData.map((item, index) => (
-            <option key={index} value={item.itemName}>
-              {item.itemName}
-            </option>
-          ))}
-        </select>
+        {/* List of products with images and names */}
+        <div className="product-list">
+          {filteredData.length > 0 ? (
+            filteredData.map((item) => (
+              <div
+                key={item._id}
+                className={`product-item ${selectedId === item._id ? 'selected' : ''}`}
+                onClick={() => handleSelect(item)}
+              >
+                <img
+                  src={item.images && item.images.length > 0 ? item.images[0] : '/placeholder.png'}
+                  alt={item.itemName}
+                  className="product-image"
+                />
+                <div className="product-name">{item.itemName}</div>
+              </div>
+            ))
+          ) : (
+            <div>No products available for this category.</div>
+          )}
+        </div>
 
         <br />
 
-        <button className="btn btn-danger" onClick={onSwap}>Swap</button>
+        <button className="btn btn-danger" onClick={onSwap} disabled={!selectedId}>Swap</button>
         <button className="btn btn-danger" onClick={onClose}>Close</button>
       </div>
 
@@ -66,14 +91,43 @@ export default function ChildModal({ category, onClose, onSelect, onSwap }) {
             padding: 20px;
             border-radius: 8px;
             text-align: center;
-            // box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Adds a shadow for depth */
         }
-        .form-select {
-            width: 100%;
+        .product-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
             margin-top: 10px;
+        }
+        .product-item {
+            cursor: pointer;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 5px;
+            width: 100px;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+        .product-item.selected {
+            border-color: red;
+        }
+        .product-image {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .product-name {
+            margin-top: 5px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .btn {
+            margin: 5px;
         }
       `}</style>
     </div>
   );
 }
-
