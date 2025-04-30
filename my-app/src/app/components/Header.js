@@ -13,6 +13,27 @@ export default function Header({ onSearch = () => {} }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [menuOpen, setMenuOpen] = useState(false); // State for hamburger menu
+  const [requestCount, setRequestCount] = useState(0);
+
+
+
+  useEffect(() => {
+    const fetchRequestCount = async () => {
+      try {
+        const res = await fetch('/api/getRequest');
+        const data = await res.json();
+        setRequestCount(data.length);  // Count of accepted requests
+      } catch (error) {
+        console.error("Failed to fetch request count:", error);
+      }
+    };
+  
+    if (isLoggedIn) {
+      fetchRequestCount();
+    }
+  }, [isLoggedIn]);
+
+
 
   useEffect(() => {
     // Fetch the session email
@@ -93,9 +114,20 @@ export default function Header({ onSearch = () => {} }) {
         </button>
 
         <div className={`header__nav ${menuOpen ? 'open' : ''}`}>
-          <Link href="/request" className="request-link" onClick={() => setMenuOpen(false)}>
-            <FaEnvelope className="request-icon" />
-          </Link>
+        {/* <Link href="/request" className="request-link" onClick={() => setMenuOpen(false)} style={{ position: 'relative' }}>
+          <FaEnvelope className="request-icon" />
+          {requestCount > 0 && <span className="notification-badge">{requestCount}</span>}
+        </Link> */}
+
+<Link
+  href="/request" className="request-link"
+  onClick={() => { setRequestCount(0);  setMenuOpen(false);  }} //  clear the badge in memory & close the hamburger menu
+  style={{ position: 'relative' }}>
+  <FaEnvelope className="request-icon" />
+  {requestCount > 0 && ( <span className="notification-badge"> {requestCount} </span> )}
+</Link>
+
+
           <Link href="/wishlist" className="wishlist-link" onClick={() => setMenuOpen(false)}>
             <FaHeart className="wishlist-icon" />
           </Link>

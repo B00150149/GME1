@@ -7,6 +7,7 @@ export async function GET(req, res) {
     console.log("in the getReceivedRequest api page")
     const session = await getCustomSession()
     const email = session.email;
+    console.log('Session email:', email);
     
     // =================================================
     const { MongoClient } = require('mongodb');
