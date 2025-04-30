@@ -112,7 +112,17 @@ export default function newlisting() {
               <textarea className="form-control" id="swapDetails" name="swapDetails" rows="3"></textarea>
             </div>
 
-            <button type="submit" className="btn btn-primary w-100" disabled={isSubmitting}>
+            <button
+              type="submit"
+              className="btn w-100"
+              style={{
+                backgroundColor: '#064e03',
+                color: 'white',
+                fontWeight: '600',
+                border: 'none',
+              }}
+              disabled={isSubmitting}
+            >
               {isSubmitting ? 'Publishing...' : 'Publish'}
             </button>
           </form>

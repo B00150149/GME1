@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 //import '../styles/newlisting.css'; // Import the CSS from styles folder
@@ -18,16 +19,40 @@ export default function Products() {
   const [showModal, setShowModal] = useState(false);
   const [selectedValue, setSelectedValue] = useState(null); // Store selected value from modal
   const [selectedItem, setSelectedItem] = useState(""); // Store selected Item
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get('searchQuery');
 
 
   // Fetch products from the API
   useEffect(() => {
-    fetch('/api/getProducts')
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data);
-      });
-  }, []);
+     if (searchQuery && searchQuery.trim() !== '') {
+      // Fetch filtered products from searchProducts API
+      fetch('/api/searchProducts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ searchQuery: searchQuery.trim() }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setData(data);
+        })
+        .catch((error) => {
+          console.error('Error fetching search results:', error);
+          setData([]);
+        });
+    } else {
+      // Fetch all products
+      fetch('/api/getProducts')
+        .then((res) => res.json())
+        .then((data) => {
+          setData(data);
+        })
+        .catch((error) => {
+          console.error('Error fetching products:', error);
+          setData([]);
+        });
+    }
+  }, [searchQuery]);
 
   function putInWishlist(itemName, description, images, category, userName, email ) {
     console.log("putting in wishlist:", {itemName, description, images, category }); 
