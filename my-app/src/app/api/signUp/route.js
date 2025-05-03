@@ -47,7 +47,7 @@ export async function GET(req, res) {
          wishlist: [], 
          requests: [] ,
          points: 50,
-         pointsHistory: [],
+         pointsHistory: [`+50 points on registration at ${new Date().toLocaleString()}`],
          createdAt: new Date() };
       const insertResult = await collection.insertOne(user);
   
@@ -56,17 +56,16 @@ export async function GET(req, res) {
       
   
       // Return success response
-      return new Response(JSON.stringify({ data: "inserted" }), { status: 200 }
+      return new Response(JSON.stringify({ data: "inserted" , email: email, points: 50   }), { status: 200 }
       );
-      return new Response({
-        "success": true,
-        "message": "User registered successfully",
-        "points": 50
-      }
+    //   return new Response({
+    //     "success": true,
+    //     "message": "User registered successfully",
+    //     "points": 50
+    //   }
 
     
-    );
-   
+    // );
   }
   
 
