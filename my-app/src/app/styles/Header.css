@@ -111,6 +111,7 @@
   justify-content: center;
   gap: 20px;
   list-style: none;
+  flex-wrap: wrap; /* Optional: wrap to next line if needed */
   margin: 0;
 }
 

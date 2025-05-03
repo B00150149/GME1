@@ -1,3 +1,5 @@
+'use client' 
+
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link'; // Import Next.js Link component
 import Image from 'next/image';
@@ -5,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import '../styles/Header.css';
 import logo from '../images/logo2.png';  // Adjust the path if necessary
 import { FaHeart, FaSearch, FaEnvelope, FaUser, FaComment, FaBars, FaTimes } from 'react-icons/fa'; // Added FaBars and FaTimes for hamburger menu
+
 
 export default function Header({ onSearch = () => {} }) {
   const router = useRouter();
@@ -32,7 +35,6 @@ export default function Header({ onSearch = () => {} }) {
       fetchRequestCount();
     }
   }, [isLoggedIn]);
-
 
 
   useEffect(() => {
