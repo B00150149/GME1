@@ -65,12 +65,26 @@ export async function POST(req) {
             return new Response(JSON.stringify({ error: "User not found or no update made" }), { status: 404 });
         }
 
+        // Determine points to add based on category
+        let pointsToAdd = 0;
+        const categoryNormalized = category.trim().toLowerCase();
+        console.log("Normalized category:", categoryNormalized);
+        if (categoryNormalized === 'small') {
+            pointsToAdd = 20;
+        } else if (categoryNormalized === 'medium') {
+            pointsToAdd = 50;
+        } else if (categoryNormalized === 'large') {
+            pointsToAdd = 100;
+        } else {
+            pointsToAdd = 20; // default points if category is unknown
+        }
+
         // Update points and pointsHistory for the user
         const pointsUpdateResult = await collection2.updateOne(
             { email: email },
             {
-                $inc: { points: 20 },
-                $push: { pointsHistory: `+20 points for product upload at ${new Date().toLocaleString()}` }
+                $inc: { points: pointsToAdd },
+                $push: { pointsHistory: `+${pointsToAdd} points for product upload (category: ${category}) at ${new Date().toLocaleString()}` }
             }
         );
 
