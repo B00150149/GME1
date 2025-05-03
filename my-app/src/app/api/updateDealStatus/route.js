@@ -41,7 +41,21 @@ export async function GET(req, res) {
         { $set: { dealStatus: 'Sold' } } // Update deal status to Sold
       );
 
-      console.log('Update Result:', updateResult);      
+      console.log('Update Result:', updateResult);
+
+      // Reduce points for the user when deal is closed
+      const usersCollection = db.collection('users');
+      const pointsToDeduct = 20; // Fixed points deduction amount
+      const pointsUpdateResult = await usersCollection.findOneAndUpdate(
+        { email: senderEmail },
+        {
+          $inc: { points: -pointsToDeduct },
+          $push: { pointsHistory: `- ${pointsToDeduct} points Deducted due to swapping Item` }
+        },
+        { returnDocument: 'after' }
+      );
+      console.log('Points deduction result:', pointsUpdateResult);
+      
 
       //Update deal status for items being swapped in newlisting
       const collection2 = db.collection('newlisting');
