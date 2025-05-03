@@ -88,6 +88,18 @@ export default function Messages() {
             .then((res) => res.json())
             .then((data) => {
                 console.log('Deal updated successfully:', data);
+                // Update local state to reflect deal closed
+                setCurrentChat((prev) => ({ ...prev, dealStatus: 'Sold' }));
+                setAcceptedRequests((prev) =>
+                    prev.map((req) =>
+                        req._id === currentChat._id ? { ...req, dealStatus: 'Sold' } : req
+                    )
+                );
+                setReceivedRequests((prev) =>
+                    prev.map((req) =>
+                        req._id === currentChat._id ? { ...req, dealStatus: 'Sold' } : req
+                    )
+                );
             })
             .catch((error) => console.error('Error updating deal:', error));
     }
@@ -150,6 +162,11 @@ export default function Messages() {
                                             <br /><small className="text-muted">{new Date(msg.Timestamp).toLocaleString()}</small>
                                         </div>
                                     ))}
+                                    {currentChat.dealStatus === 'Sold' && (
+                                        <div className="alert alert-info mt-3" role="alert">
+                                            User has closed deal
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="card-footer">
@@ -160,8 +177,15 @@ export default function Messages() {
                                             value={newMessage}
                                             onChange={(e) => setNewMessage(e.target.value)}
                                             placeholder="Type a message..."
+                                            disabled={currentChat.dealStatus === 'Sold'}
                                         />
-                                        <button className="btn btn-primary" onClick={() => putInMessages(currentChat._id, newMessage)}>Send</button>
+                                        <button
+                                            className="btn btn-primary"
+                                            onClick={() => putInMessages(currentChat._id, newMessage)}
+                                            disabled={currentChat.dealStatus === 'Sold' || newMessage.trim() === ''}
+                                        >
+                                            Send
+                                        </button>
                                     </div>
                                 </div>
                             </div>
