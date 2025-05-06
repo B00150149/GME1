@@ -71,8 +71,13 @@ export default function Header({ onSearch = () => {} }) {
         if (!response.ok) throw new Error('Logout failed');
         return response.json();
       })
-      .then((data) => console.log(data.message));
-    window.location.reload();
+      .then((data) => {
+        console.log(data.message);
+        router.push('/');
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   const handleSearchChange = (event) => {

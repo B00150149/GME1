@@ -10,6 +10,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function newlisting() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedImages, setSelectedImages] = useState([]);
+
+  const handleImageChange = (event) => {
+    const files = Array.from(event.target.files);
+    const filePreviews = files.map(file => URL.createObjectURL(file));
+    setSelectedImages(filePreviews);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -104,7 +111,13 @@ export default function newlisting() {
 
             <div className="form-group">
               <label htmlFor="images" className="form-label">Images:</label>
-              <input type="file" className="form-control" id="images" name="images" multiple />
+              <input type="file" className="form-control" id="images" name="images" multiple onChange={handleImageChange} />
+            </div>
+
+            <div className="image-previews" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '15px' }}>
+              {selectedImages.map((src, index) => (
+                <img key={index} src={src} alt={`Preview ${index}`} style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '5px' }} />
+              ))}
             </div>
 
             <div className="form-group">

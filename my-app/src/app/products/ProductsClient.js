@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Button, Card, Row, Col } from 'react-bootstrap';
+import { Button, Card, Row, Col, Carousel } from 'react-bootstrap';
 import { FaHeart } from 'react-icons/fa';
 import ChildModal from '../productSwap/page.js';
 import '../styles/swap.css';
@@ -70,13 +70,28 @@ export default function ProductsClient() {
           {data.length > 0 && data.map((item, index) => (
             <Col key={index}>
               <Card className="h-100 shadow-sm">
-                <Card.Img
-                  variant="top"
-                  style={{ height: '60%', width: '100%' }}
-                  src={item.images && item.images.length > 0 ? item.images[0] : '/placeholder.png'}
-                  alt={item.itemName}
-                  className="p-3"
-                />
+                {item.images && item.images.length > 1 ? (
+                  <Carousel variant="dark" interval={null} className="p-3" style={{ height: '60%', width: '100%' }}>
+                    {item.images.map((imgSrc, idx) => (
+                      <Carousel.Item key={idx}>
+                        <img
+                          className="d-block w-100"
+                          src={imgSrc}
+                          alt={`${item.itemName} image ${idx + 1}`}
+                          style={{ height: '300px', objectFit: 'cover', borderRadius: '5px' }}
+                        />
+                      </Carousel.Item>
+                    ))}
+                  </Carousel>
+                ) : (
+                  <Card.Img
+                    variant="top"
+                    style={{ height: '60%', width: '100%' }}
+                    src={item.images && item.images.length > 0 ? item.images[0] : '/placeholder.png'}
+                    alt={item.itemName}
+                    className="p-3"
+                  />
+                )}
                 <Card.Body>
                   <Card.Title>{item.itemName}</Card.Title>
                   <Card.Text>
