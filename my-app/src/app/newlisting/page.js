@@ -111,7 +111,7 @@ export default function newlisting() {
 
             <div className="form-group">
               <label htmlFor="images" className="form-label">Images:</label>
-              <input
+              {/* <input
                 type="file"
                 className="form-control"
                 id="images"
@@ -120,7 +120,16 @@ export default function newlisting() {
                 capture="environment"
                 multiple
                 onChange={handleImageChange}
-              />
+              /> */}
+              <input
+  type="file"
+  className="form-control"
+  id="images"
+  name="images"
+  accept="image/*"
+  multiple
+  onChange={handleImageChange}
+/>
             </div>
 
             <div className="image-previews" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '15px' }}>
