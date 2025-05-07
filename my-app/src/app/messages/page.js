@@ -14,6 +14,11 @@ export default function Messages() {
     const [newMessage, setNewMessage] = useState('');
     const [userData, setUserData] = useState(null);
     const [points, setPoints] = useState(0);
+    const [isMobileChatOpen, setIsMobileChatOpen] = useState(false);
+
+    // New state for toggles
+    const [isReceivedOpen, setIsReceivedOpen] = useState(true);
+    const [isAcceptedOpen, setIsAcceptedOpen] = useState(true);
 
     useEffect(() => {
         const storedPoints = localStorage.getItem('userPoints');
@@ -81,6 +86,9 @@ export default function Messages() {
 
     function onSelectUser(request) {
         setCurrentChat(request);
+        if (window.innerWidth < 768) {
+            setIsMobileChatOpen(true);
+        }
     }
 
     function updateDeal() {
@@ -109,48 +117,72 @@ export default function Messages() {
             <Header />
             <div className="container mt-4">
                 <h2>Messages</h2>
-                <h4>Your Points: {points}</h4>
                 <div className="row">
                     {/* Sidebar */}
-                    <div className="col-md-4 border-end">
-                        <h5 className="mb-3">Received Swaps</h5>
-                        <div className="list-group">
-                            {requestsReceived.map((request) => (
-                                <button
-                                    key={request._id}
-                                    className={`list-group-item list-group-item-action ${currentChat && currentChat._id === request._id ? 'active' : ''}`}
-                                    onClick={() => onSelectUser(request)}
-                                >
-                                    <div><strong>{request.senderName}</strong></div>
-                                    <div>{request.swapItemName}</div>
-                                    {request.dealStatus === 'Sold' && <div><strong>Sold</strong></div>}
-                                </button>
-                            ))}
+                    <div className={`col-md-4 border-end ${isMobileChatOpen ? 'd-none d-md-block' : ''}`} style={{ display: isMobileChatOpen ? 'none' : 'block' }}>
+                        {/* Toggle buttons side by side */}
+                        <div className="d-flex mb-3">
+                            <button
+                                className={`btn me-2 ${isReceivedOpen ? 'btn-primary' : 'btn-outline-primary'}`}
+                                onClick={() => {
+                                    setIsReceivedOpen(true);
+                                    setIsAcceptedOpen(false);
+                                }}
+                            >
+                                Received Swaps
+                            </button>
+                            <button
+                                className={`btn ${isAcceptedOpen ? 'btn-primary' : 'btn-outline-primary'}`}
+                                onClick={() => {
+                                    setIsAcceptedOpen(true);
+                                    setIsReceivedOpen(false);
+                                }}
+                            >
+                                Accepted Swaps
+                            </button>
                         </div>
+                        {isReceivedOpen && (
+                            <div className="list-group">
+                                {requestsReceived.map((request) => (
+                                    <button
+                                        key={request._id}
+                                        className={`list-group-item list-group-item-action ${currentChat && currentChat._id === request._id ? 'active' : ''}`}
+                                        onClick={() => onSelectUser(request)}
+                                    >
+                                        <div><strong>{request.senderName}</strong></div>
+                                        <div>{request.swapItemName}</div>
+                                        {request.dealStatus === 'Sold' && <div><strong>Sold</strong></div>}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
 
                         <br /><br /><br />
 
-                        <h5 className="mb-3">Accepted Swaps</h5>
-                        <div className="list-group">
-                            {requestsAccepted.map((request) => (
-                                <button
-                                    key={request._id}
-                                    className={`list-group-item list-group-item-action ${currentChat && currentChat._id === request._id && request.dealStatus === 'Open' ? 'active' : ''}`}
-                                    onClick={() => onSelectUser(request)}
-                                >
-                                    <div><strong>{request.userName}</strong></div>
-                                    <div>{request.itemName}</div>
-                                    {request.dealStatus === 'Sold' && <div><strong>Sold</strong></div>}
-                                </button>
-                            ))}
-                        </div>
+                        {/* Removed old toggle header and list for Accepted Swaps, replaced with conditional rendering below */}
+                        {isAcceptedOpen && (
+                            <div className="list-group">
+                                {requestsAccepted.map((request) => (
+                                    <button
+                                        key={request._id}
+                                        className={`list-group-item list-group-item-action ${currentChat && currentChat._id === request._id && request.dealStatus === 'Open' ? 'active' : ''}`}
+                                        onClick={() => onSelectUser(request)}
+                                    >
+                                        <div><strong>{request.userName}</strong></div>
+                                        <div>{request.itemName}</div>
+                                        {request.dealStatus === 'Sold' && <div><strong>Sold</strong></div>}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     {/* Chat Window */}
-                    <div className="col-md-8">
+                    <div className={`col-md-8 ${isMobileChatOpen ? '' : 'd-none d-md-block'}`} style={{ display: isMobileChatOpen ? 'block' : 'none' }}>
                         {currentChat ? (
                             <div className="card">
                                 <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                    <button className="btn btn-light me-2 d-md-none" onClick={() => setIsMobileChatOpen(false)}>Back</button>
                                     <h6 className="mb-0">{currentChat.senderName} :</h6>
                                     <button className="btn btn-light ms-auto" onClick={() => updateDeal(currentChat._id)}>Close Deal</button>
                                 </div>
